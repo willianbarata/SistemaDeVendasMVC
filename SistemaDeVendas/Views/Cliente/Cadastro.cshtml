@@ -1,5 +1,67 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
+﻿<h2> Clientes </h2>
+<hr />
+
+@model ClienteViewModel;
+
 @{
+    var disabled = (Model.Codigo == null) ? "disabled" : string.Empty;
 }
+
+<form asp-controller="Cliente" asp-action="Cadastro" method="post">
+
+
+    <input type="hidden" asp-for="Codigo" value="@Model.Codigo" />
+
+    <div class="form-group">
+        <div class="col-4">
+            <label> Nome </label>
+            <input type="text" asp-for="Nome" value="@Model.Nome" class="form-control" />
+            <span asp-validation-for="Nome" class="text-danger"></span>
+        </div>
+        <br />
+
+        <div class="col-4">
+            <label> Cnpj / Cpf </label>
+            <input type="text" asp-for="CNPJ_CPF" value="@Model.CNPJ_CPF" class="form-control" />
+            <span asp-validation-for="CNPJ_CPF" class="text-danger"></span>
+        </div>
+        <br />
+
+        <div class="col-4">
+            <label> E-mail </label>
+            <input type="text" asp-for="Email" value="@Model.Email" class="form-control" />
+            <span asp-validation-for="Email" class="text-danger"></span>
+        </div>
+        <br />
+
+        <div class="col-4">
+            <label> Celular </label>
+            <input type="text" asp-for="Celular" value="@Model.Celular" class="form-control" />
+            <span asp-validation-for="Celular" class="text-danger"></span>
+        </div>
+        <br />
+        <button type="button" class="btn btn-info" onclick="Novo()">Novo</button>
+        <button type="submit" class="btn btn-success" onclick="Novo()">Gravar</button>
+        <button type="button" class="btn btn-warning" onclick="Listagem()">Listagem</button>
+        <button type="button" class="btn btn-danger" onclick="Excluir(@Model.Codigo)" @disabled>Excluir</button>
+    </div>
+</form>
+
+<script>
+    function Novo() {
+        Request("Cadastro");
+    }
+
+    function Listagem() {
+        Request("");
+    }
+
+    function Excluir(codigo) {
+        Request("Excluir\\" + codigo);
+    }
+
+    function Request(request) {
+        window.location = window.origin + "\\Cliente\\" + request;
+    }
+
+</script>
