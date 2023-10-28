@@ -18,6 +18,12 @@ namespace SistemaDeVendas.Controllers
             //liberar memória
             _context.Dispose();
 
+            return View(lista);
+        }
+
+        [HttpGet]
+        public IActionResult Cadastro(int? id)
+        {
             return View();
         }
     }
