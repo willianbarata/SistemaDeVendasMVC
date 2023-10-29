@@ -99,6 +99,8 @@ namespace SistemaDeVendas.Controllers
 
                 };
 
+                //objVenda.Cliente = _context.Cliente.Where(x => x.Codigo ==  model.CodigoCliente).FirstOrDefault();
+
                 if (model.Codigo == null)
                 {
                     _context.Venda.Add(objVenda);

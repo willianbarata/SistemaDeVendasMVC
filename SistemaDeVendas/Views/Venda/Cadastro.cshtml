@@ -15,7 +15,7 @@
     <div class="form-group">
         <div class="col-4">
             <label> Data </label>
-            <input type="text" asp-for="Data" value="@Model.Data" class="form-control" />
+            <input type="date" asp-for="Data" value="@Model.Data" class="form-control" />
             <span asp-validation-for="Data" class="text-danger"></span>
         </div>
         <br />
@@ -34,13 +34,58 @@
             <select id="cboProduto" onchange="BuscarPrecoProduto()" asp-items="@Model.ListaProdutos" class="form-control" input-lg></select>
             
         </div>
-
+        <input type="hidden" asp-for="@Model.ListaClientes" value="@Model.ListaClientes" class="form-control" />
+        <input type="hidden" asp-for="@Model.ListaProdutos" value="@Model.ListaProdutos" class="form-control" />
         <div class="form-group">
             <div class="col-md-2">
                 <label> Preço unitário</label>
                 <input id="txtPrecoUnitario" type="number" class="form-control" disabled />
             </div>
+
+            <div class="col-md-2">
+                <label> Quantidade</label>
+                <input id="txtQtde" type="number" class="form-control" onchange="CalcularSubTotal()" />
+            </div>
+
+            <div class="col-md-2">
+                <label> SubTotal </label>
+                <input id="txtSubTotal" type="number" class="form-control" disabled />
+            </div>
+            <div class="col-md-2">
+                <br />
+                    <button type="button" class="btn btn-info" onclick="AddProduto()" > Adicionar </button>
+                <br />
+            </div>
         </div>
+        <br />
+
+        <div class="form-group">
+            <div class="col-md-12">
+                <table class="table table-bordered">
+                    <thead class="thread-inverse">
+                        <tr style="background-color: #f6f6f6;">
+                            <th> Produto </th>
+                            <th> Preço Unitário </th>
+                            <th> Quantidade </th>
+                            <th> Total </th>
+                        </tr>
+                    </thead>
+                    <tbody id="gridProdutos"> </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="form-group">
+            
+            <div class="col-md-3">
+                <label>Total</label>
+                <input id="txtTotal" asp-for="Total" type="text" value="@Model.Total" class="form-control" />
+                <span asp-validation-for="Total" class="text-danger"></span>
+            </div>
+        </div>
+
+        <textarea asp-for="JsonProdutos" id="txtJsonProdutos" class="col-12"> </textarea>
+
         <br />
 
         <br />
@@ -52,6 +97,62 @@
 </form>
 
 <script>
+    var items = new Object();
+    items.Produtos = new Array();
+    var gridProdutos = document.getElementById("gridProdutos");
+    
+    function AddProduto() {
+        var codigoProduto = document.getElementById("cboProduto");
+        var qtde = document.getElementById("txtQtde").value;
+        var valorUnitario = document.getElementById("txtPrecoUnitario").value;
+        var subTotal = document.getElementById("txtSubTotal").value;
+
+        items.Produtos.push({
+            "CodigoProduto" : codigoProduto.value,
+            "Quantidade" : qtde,
+            "ValorUnitario" : valorUnitario,
+            "ValorTotal" : subTotal
+        });
+
+        console.log(items.Produtos);
+        document.getElementById("txtJsonProdutos").value = JSON.stringify(items.Produtos);
+
+        var linhaGrid = "<tr id='"+ codigoProduto.value + "'>"+
+            "<td>" + codigoProduto.options[codigoProduto.selectedIndex].text + "</td>" +
+            "<td>" + valorUnitario + "</td>" +
+            "<td>" + qtde + "</td>" +
+            "<td> R$ " + subTotal + "</td>"
+        "<td>" + valorUnitario + "</td>" +
+            "</tr>";
+
+        gridProdutos.innerHTML += linhaGrid;
+
+        var total = Number(document.getElementById("txtTotal").value.toString().replace(",", ".")) + Number(subTotal);
+        document.getElementById("txtTotal").value = FixaDuasCasasDecimais(total).replace(",", ".");
+
+        document.getElementById("txtQtde").value = "";
+        console.log("passo 1");
+        document.getElementById("txtSubTotal").value = "";
+        console.log("passo 2");
+        document.getElementById("txtPrecoUnitario").value = "";
+        console.log("passo 3");
+        document.getElementById("cboProduto").selectedIndex = -1;
+        console.log("passo 4");
+    }
+
+    function FixaDuasCasasDecimais(num) {
+        return parseFloat(Math.round(num * 100) / 100).toFixed(2);
+    }
+
+    function CalcularSubTotal() {
+        
+        var precoUnitario = document.getElementById("txtPrecoUnitario").value;
+        
+        var subTotal = precoUnitario * document.getElementById("txtQtde").value;
+        
+        document.getElementById("txtSubTotal").value = FixaDuasCasasDecimais(subTotal);
+    }
+
     function BuscarPrecoProduto(){
         var codigoProduto = document.getElementById("cboProduto");
         var url = `/LerValorProduto/${codigoProduto.value}`;
