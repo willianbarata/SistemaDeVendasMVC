@@ -72,7 +72,7 @@ namespace SistemaDeVendas.Controllers
                     Codigo = model.Codigo,
                     Descricao = model.Descricao,
                     Quantidade = model.Quantidade,
-                    Valor = model.Valor,
+                    Valor = (decimal)model.Valor,
                     CodigoCategoria = (int)model.CodigoCategoria,
                 };
 

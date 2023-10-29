@@ -9,7 +9,7 @@ namespace SistemaDeVendas.Entidades
         public int? Codigo { get; set; }
         public string Descricao { get; set; }
         public double Quantidade { get; set; }
-        public decimal? Valor { get; set; }
+        public decimal Valor { get; set; }
 
         //DataAnnotations para chave estrangeira
         [ForeignKey("Categoria")]
