@@ -9,12 +9,21 @@ namespace SistemaDeVendas.Controllers
     public class LoginController : Controller
     {
         public readonly ApplicationDbContext _context;
-        public LoginController(ApplicationDbContext context)
+        public readonly IHttpContextAccessor _httpSession;
+        public LoginController(ApplicationDbContext context, IHttpContextAccessor httpSession)
         {
             _context = context;
+            _httpSession = httpSession;
         }
-        public IActionResult Index()
+        public IActionResult Index(int? id)
         {
+            if (id != null)
+            {
+                if(id == 0)
+                {
+                    _httpSession.HttpContext.Session.Clear();
+                }
+            }
             return View();
         }
 
@@ -36,6 +45,10 @@ namespace SistemaDeVendas.Controllers
                 }
                 else
                 {
+                    _httpSession.HttpContext.Session.SetString(Sessao.NOME_USUARIO, usuario.Nome);
+                    _httpSession.HttpContext.Session.SetString(Sessao.EMAIL_USUARIO, usuario.Email);
+                    _httpSession.HttpContext.Session.SetInt32(Sessao.CODIGO_USUARIO, (int)usuario.Codigo);
+                    _httpSession.HttpContext.Session.SetInt32(Sessao.LOGADO, 1);
                     return RedirectToAction("Index", "Home");
                 }
             }
